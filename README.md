@@ -241,6 +241,12 @@ Opens at `http://localhost:7860`. Enter any r/soccer post to see the label and p
 
 ---
 
+## Interaction Walkthrough
+
+<img src='https://imgur.com/a/tsk2tQS.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+---
+
 ## How to Run
 
 ```bash
