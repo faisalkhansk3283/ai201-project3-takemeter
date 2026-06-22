@@ -207,6 +207,40 @@ The root cause is the dataset: because the posts were generated to be prototypic
 
 ---
 
+## Stretch Features
+
+### Error Pattern Analysis
+
+Beyond listing individual wrong predictions, the 9 misclassifications reveal two systematic patterns:
+
+**Pattern 1: Soccer vocabulary triggers `analysis` (7 of 9 errors)**
+
+Five `hot_take` posts were predicted as `analysis`. All five share the same structure: they mention a specific player by name and make a claim about their performance or value. Examples include the De Bruyne injury post, the Haaland one-trick-pony post, and the Dembele flat-track-bully post. None of these contain real evidence — but they contain soccer-specific nouns (player names, club names, competitions) that co-occur heavily with `analysis` posts in the training set.
+
+The model learned: *soccer vocabulary + evaluative claim = analysis*. The intended boundary was: *evidence as structural core = analysis*. These are different things, and 161 training examples wasn't enough to learn the deeper signal.
+
+**Pattern 2: Opinion-sounding conclusions trigger `hot_take` (2 of 9 errors)**
+
+Two `analysis` posts were predicted as `hot_take`. Both end with a sentence that sounds like an opinion ("teams are now more conservative", "the era before Sky Sports will be seen as the golden age"). The model over-weighted the final sentence and under-weighted the statistical opening. This is the inverse failure: genuine evidence dismissed because the conclusion was phrased opinionatedly.
+
+**What would fix it:** More training examples where hot_take posts contain player names and stats (to break the vocabulary shortcut), and more analysis examples that end with strong-sounding conclusions (to break the conclusion-phrasing shortcut). Both are annotation diversity problems, not model problems.
+
+---
+
+### Deployed Interface
+
+A Gradio app (`app.py`) runs the fine-tuned model locally and displays the predicted label and confidence for any typed post.
+
+**To run:**
+```bash
+pip install gradio transformers torch
+python app.py
+```
+
+Opens at `http://localhost:7860`. Enter any r/soccer post to see the label and per-class confidence scores.
+
+---
+
 ## How to Run
 
 ```bash
@@ -224,4 +258,8 @@ python fix_note.py
 # 4. Open Colab notebook and upload data/labeled_posts.csv
 # https://colab.research.google.com/drive/1ilOny04QwR6CRUYLKvFycwzDsQLdPypI
 # Run sections: 1 → 2 → 5 (baseline) → 3 (fine-tune) → 4 → 6 (export)
+
+# 5. Run the Gradio interface (after downloading output/fine_tuned_model from Colab)
+pip install gradio
+python app.py
 ```
